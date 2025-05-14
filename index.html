@@ -1,3 +1,33 @@
+<!DOCTYPE html>
 <html>
-    Hello World!
+<head>
+  <meta charset="UTF-8">
+  <title>Inline Plotly Surface Plot</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+  <h3>3x3 Surface Plot (Inline)</h3>
+  <div id="surfPlot" style="width:600px;height:600px;"></div>
+
+  <script>
+    const data = [{
+      type: 'surface',
+      x: [-3, 0, 3],
+      y: [-3, 0, 3],
+      z: [
+        [0.0861, 0.1600, 0.0861],
+        [0.1600, 0.2400, 0.1600],
+        [0.0861, 0.1600, 0.0861]
+      ],
+      colorscale: 'Viridis'
+    }];
+
+    const layout = {
+      title: 'Surface Plot from MATLAB Peaks(3)',
+      autosize: true,
+    };
+
+    Plotly.newPlot('surfPlot', data, layout);
+  </script>
+</body>
 </html>
