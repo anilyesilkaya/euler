@@ -45,7 +45,7 @@ function writePlotDataInJSON(idx, h, options)
     jsonData = jsonencode(plotData);
     
     % Write JSON data to a file
-    fileName = sprintf('plot%d.json', idx);
+    fileName = sprintf('notebooks/plot%d.json', idx);
     fid = fopen(fileName, 'w');
     if fid == -1
         error('Cannot open file for writing: %s', fileName);

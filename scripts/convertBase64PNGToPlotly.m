@@ -80,5 +80,5 @@ function convertBase64PNGToPlotly(inputFile, outputFile)
     fwrite(fid, newHTML);
     fclose(fid);
 
-    fprintf('Wrote responsive Plotly HTML to "%s"\n', outputFile);
+    % fprintf('Wrote responsive Plotly HTML to "%s"\n', outputFile);
 end

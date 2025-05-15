@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><link rel="stylesheet" href="../assets/styles.css">
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,IE=9,chrome=1"><meta name="generator" content="MATLAB 2025a"><title>My First Scientific Blog Post</title></head><body>
+<div class="container">
+<header class="page-header">
+  <h1>My First Scientific Blog Post</h1>
+  <p class="meta">Date: 15-May-2025</p>
+</header>
+<div class = rtcContent><div class="CodeBlock"><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >f = figureDynamic;</span></span></div></div><div class="inlineWrapper"><div  class = 'S3'><span style="white-space: pre"><span >[X, Y, Z] = peaks(25);</span></span></div></div><div class="inlineWrapper outputs"><div  class = 'S4'><span style="white-space: pre"><span >surf(X, Y, Z);</span></span></div><div  class = 'S5'><div id="plotDiv1" style="width:100%;height:688px;"></div>
+</div></div></div><div  class = 'S6'><span>This is my 2D plot</span></div><div class="CodeBlock"><div class="inlineWrapper"><div  class = 'S2'><span style="white-space: pre"><span >f2 = figureDynamic;</span></span></div></div><div class="inlineWrapper outputs"><div  class = 'S4'><span style="white-space: pre"><span >plot(0:0.01:10, sin(0:0.01:10));</span></span></div><div  class = 'S5'><div id="plotDiv2" style="width:100%;height:688px;"></div>
+</div></div><div class="inlineWrapper"><div  class = 'S7'><span style="white-space: pre"><span >exportDynamicFigures();  </span><span style="color: rgb(0, 128, 19);">% Automatically writes plotX.json</span></span></div></div></div>
+<br>
+<!-- 
+##### SOURCE BEGIN #####
+%% My First Scientific Blog Post
+% This is my surf plot
+
+f = figureDynamic;
+[X, Y, Z] = peaks(25);
+surf(X, Y, Z);
+%% 
+% This is my 2D plot
+
+f2 = figureDynamic;
+plot(0:0.01:10, sin(0:0.01:10));
+exportDynamicFigures();  % Automatically writes plotX.json
+##### SOURCE END #####
+-->
+</div><script>
+fetch("plot1.json")
+  .then(r => r.json())
+  .then(data => {
+    const gd = document.getElementById("plotDiv1");
+    Plotly.newPlot(gd, [data], {
+      autosize: true,
+      margin: {t: 30, b: 30, l: 10, r: 10}
+    }, {responsive: true});
+  })
+  .catch(e => console.error("Failed to load plot1.json:", e));
+
+fetch("plot2.json")
+  .then(r => r.json())
+  .then(data => {
+    const gd = document.getElementById("plotDiv2");
+    Plotly.newPlot(gd, [data], {
+      autosize: true,
+      margin: {t: 30, b: 30, l: 10, r: 10}
+    }, {responsive: true});
+  })
+  .catch(e => console.error("Failed to load plot2.json:", e));
+
+</script>
+</div>
+<footer class="page-footer">
+  <p>Powered by <a href="https://github.com/yourrepo/euler">Euler</a></p>
+</footer>
+<script>
+document.querySelectorAll(".inlineWrapper").forEach(function(wrapper){
+  var text = wrapper.innerText.trim();
+  if(!text) return;
+  var btn = document.createElement("button"); btn.textContent="Copy";
+  btn.onclick = function(){ navigator.clipboard.writeText(text); btn.textContent="Copied!"; setTimeout(function(){btn.textContent="Copy";},2000); };
+  Object.assign(btn.style,{position:"absolute",top:"6px",right:"8px",backgroundColor:"#444",color:"#eee",border:"none",padding:"2px 6px",fontSize:"11px",borderRadius:"3px",cursor:"pointer",opacity:"0.8"});
+  wrapper.style.position="relative"; wrapper.appendChild(btn);
+});
+</script>
+</body></html>

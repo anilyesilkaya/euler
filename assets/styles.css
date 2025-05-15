@@ -1,0 +1,157 @@
+:root {
+  --gray900:   #212121;    /* Primary Text */
+  --gray700:   #616161;    /* Secondary Text */
+  --blue550:   #1171BE;    /* Hyperlink */
+  --blue500:   #268CDD;    /* Hyperlink Hover */
+  --purple700: #8516D1;    /* Hyperlink Visited */
+  --orange600: #C04C0B;    /* Live Editor Title */
+  --white:     #FFFFFF;    /* Code background */
+  --gray50:    #F5F5F5;    /* Canvas & Figure bg */
+  --gray100:   #E6E6E6;    /* Secondary Background */
+  --gray600:   #7D7D7D;    /* Primary Border */
+  --gray300:   #BFBFBF;    /* Secondary Border */
+  --blue600:   #1656A7;    /* Primary Selection */
+  --blue500b:  #268CDD;    /* Secondary Selection */
+  --blue200:   #B4DEFF;    /* Tertiary Selection */
+  --yellow500: #FFD60A;    /* Primary Highlight */
+  --yellow200: #FFF5BC;    /* Secondary Highlight */
+  --red600:    #B7312C;    /* Error */
+  --honey550:  #B36205;    /* Warning */
+  --green600:  #008013;    /* Success */
+  --cobalt600: #0E00FF;    /* Keyword */
+  --purple600: #A709F5;    /* String */
+  --yellow600: #8B6606;    /* System Commands */
+  --brown600:  #A0522C;    /* Validation Sections */
+  --teal600:   #027880;    /* Variables */
+}
+
+/* Base layout */
+body {
+  margin: 0;
+  padding: 2rem;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  color: var(--gray900);
+  background-color: var(--gray50);
+  line-height: 1.6;
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Headings & text */
+h1, h2, h3, h4 {
+  color: var(--gray900);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+p, li {
+  color: var(--gray700);
+  margin-bottom: 1rem;
+}
+
+/* Links */
+a {
+  color: var(--blue550);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--blue500);
+}
+a:visited {
+  color: var(--purple700);
+}
+
+/* Code blocks */
+.inlineWrapper, .CodeBlock {
+  background-color: var(--white) !important;
+  color: var(--gray900) !important;
+  font-family:
+    'JetBrains Mono', 'Fira Code', 'Cascadia Code',
+    Menlo, Monaco, Consolas, 'Courier New', monospace !important;
+  font-variant-ligatures: common-ligatures;
+  font-size: 0.9rem;
+  line-height: 1.4 !important;
+  padding: 0.75rem !important;
+  margin: 1rem 0 !important;
+  border: 1px solid var(--gray300) !important;
+  border-radius: 4px !important;
+  overflow-x: auto !important;
+  position: relative !important;
+  display: block !important;
+}
+
+/* Figures */
+figure, .eoOutputWrapper, .figureContainer {
+  background-color: var(--gray50);
+  padding: 1rem;
+  border: 1px solid var(--gray600);
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+
+/* Prism tokens (if using Prism.js) */
+.token.comment      { color: var(--green600); }
+.token.keyword      { color: var(--cobalt600); }
+.token.string       { color: var(--purple600); }
+.token.function     { color: var(--orange600); }
+.token.number       { color: var(--blue550); }
+.token.operator     { color: var(--gray900); }
+.token.punctuation  { color: var(--gray900); }
+.token.syntax-error { color: var(--red600); }
+
+/* Page header */
+.page-header {
+  border-bottom: 1px solid var(--gray300);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+.page-header h1 {
+  margin: 0;
+  color: var(--gray900);
+}
+.page-header .meta {
+  color: var(--gray700);
+  font-size: 0.9rem;
+}
+
+/* Page footer */
+.page-footer {
+  border-top: 1px solid var(--gray300);
+  margin-top: 2rem;
+  padding-top: 1rem;
+  text-align: center;
+  color: var(--gray700);
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+.page-footer a {
+  color: var(--blue550);
+  text-decoration: none;
+}
+
+/* Borders & highlights */
+hr, .primary-border {
+  border-color: var(--gray600);
+}
+.secondary-border {
+  border-color: var(--gray300);
+}
+::selection {
+  background-color: var(--blue600);
+  color: var(--white);
+}
+::-moz-selection {
+  background-color: var(--blue600);
+  color: var(--white);
+}
+.highlight-primary   { background-color: var(--yellow500); }
+.highlight-secondary { background-color: var(--yellow200); }
+.highlight-tertiary  { background-color: var(--blue200); }
+.list-selected       { background-color: var(--gray300); }
+
+/* Alerts */
+.alert-error   { color: var(--white); background-color: var(--red600); padding: 0.5rem; border-radius: 3px; }
+.alert-warning { color: var(--white); background-color: var(--honey550); padding: 0.5rem; border-radius: 3px; }
+.alert-success { color: var(--white); background-color: var(--green600); padding: 0.5rem; border-radius: 3px; }
