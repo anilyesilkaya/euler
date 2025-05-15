@@ -1,3 +1,5 @@
+close all
+clear figureDynamic
 src = 'test.mlx';
 
  [~,name,ext] = fileparts(src);
