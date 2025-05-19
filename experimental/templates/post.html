@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{postTitle}}</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <style type="text/css">
+        /* Scientific blog styles from first_post.html */
+        .rtcContent { padding: 30px; }
+        .S0 { margin: 3px 10px 5px 4px; padding: 0; line-height: 28.8px; white-space: pre-wrap;
+              color: rgb(192, 76, 11); font-family: Helvetica, Arial, sans-serif; font-size: 24px; }
+        .S1 { margin: 2px 10px 9px 4px; padding: 0; line-height: 21px; white-space: pre-wrap;
+              color: rgb(33, 33, 33); font-family: Helvetica, Arial, sans-serif; font-size: 14px; }
+        .CodeBlock { background-color: #F5F5F5; margin: 10px 15px; display: block; padding: 10px; border-radius: 4px; }
+        .S2 { border-left: 1px solid #D9D9D9; border-right: 1px solid #D9D9D9; border-top: 1px solid #D9D9D9;
+              border-radius: 4px 4px 0 0; padding: 6px 45px 0 13px; font-family: Menlo, Monaco, monospace; font-size: 14px; }
+        .S3 { border-left: 1px solid #D9D9D9; border-right: 1px solid #D9D9D9; border-bottom: 1px solid #D9D9D9;
+              border-radius: 0 0 4px 4px; padding: 0 45px 4px 13px; font-family: Menlo, Monaco, monospace; font-size: 14px; }
+        .S4 { margin: 10px 10px 9px 4px; padding: 0; line-height: 21px; white-space: pre-wrap;
+              color: rgb(33, 33, 33); font-family: Helvetica, Arial, sans-serif; font-size: 14px; }
+        .eoOutputWrapper { width: calc(90vw - 10px) !important; }
+    </style>
+</head>
+<body>
+    <div class="rtcContent">
+        <h1 class="S0"><span>{{postTitle}}</span></h1>
+        <div class="S1"><span><time datetime="{{postDateIso}}">{{postDateReadable}}</time> by {{author}}</span></div>
+        <div class="post-body">
+            {{postBody}}
+        </div>
+    </div>
+    <footer id="site-footer">
+        <p>Powered by Euler</p>
+    </footer>
+</body>
+</html>

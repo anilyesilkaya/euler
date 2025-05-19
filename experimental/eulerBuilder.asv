@@ -1,0 +1,214 @@
+classdef eulerBuilder < handle
+    properties
+        inputFile
+        filePath
+        fileName
+        fileExt
+        src
+        dst
+        tmp
+    end
+
+    methods
+        % Constructor
+        function obj = eulerBuilder(inputFile)
+            assert(~isempty(dir(inputFile)), "File cannot be found.");
+            [path, name, ext] = fileparts(inputFile);
+            obj.inputFile = inputFile;
+            obj.filePath = path;
+            obj.fileName = name;
+            obj.fileExt = ext;
+            obj.src = which([fullfile(path,name) ext]);
+            obj.dst = replace(obj.src,'.mlx','.html');
+            obj.tmp = obj.dst;
+        end
+
+        function build(obj)
+            % Initialization
+            obj.initialize();
+
+            % Execute and export to HTML
+            obj.export2html();
+        end
+    end
+
+    % Private methods
+    methods (Access=private)
+        function initialize(~)
+            addpath('../assets')
+            addpath('../notebooks')
+            addpath('../scripts')
+        end
+
+        function htmlText = readHTML(obj, tmpFileName)
+            % Read the original HTML
+            htmlText = fileread(obj.tmp);
+            obj.tmp = tmpFileName;
+        end
+
+        function writeHTML(~, htmlName, htmlContent)
+            % Write the modified HTML to a temporary file
+            fid = fopen(htmlName, 'w', 'n', 'UTF-8');
+            if fid < 0
+                error('Could not open output file %s for writing.', htmlName);
+            end
+            fwrite(fid, htmlContent);
+            fclose(fid);
+        end
+
+        function export2html(obj)
+            % HTML export
+            switch obj.fileExt
+                case {'.mlx', '.m'}
+                    % Execute the and save the output (requires absolute path of the file)
+                    % Note that the plot data will be saved during this
+                    % process
+                    matlab.internal.liveeditor.executeAndSave(obj.src);
+
+                    % Export MLX to HTML
+                    matlab.internal.liveeditor.openAndConvert(obj.src,obj.dst);
+
+                    % Make the HTML prettier
+                    obj.prettyPrintHTML();
+
+                    % Replace the base64 PNGs with the placeholder
+                    % Save it to file_tmp.html
+                    obj.png2placeholder();
+
+                    % Replace the title with the placeholder
+                    obj.title2placeholder();
+                    
+                    % Replace codeblocks with the placeholder
+                    obj.code2placeholder();
+                otherwise
+                    error("Only MLX and Live M files are supported.");
+            end
+        end
+
+        function prettyPrintHTML(obj)
+            % Read HTML
+            htmlText = obj.readHTML(replace(obj.tmp,'.html','_tmp.html'));
+        
+            %--- Step 1: break tags onto their own lines ---
+            % put a newline before every '<' and after every '>'
+            raw = regexprep(htmlText, '>', '>\n');
+            raw = regexprep(raw, '\n\s*<', '\n<');  % clean up spaces before tags
+            raw = regexprep(raw, '<', '\n<');
+            
+            %--- Split into lines and initialize ---
+            lines = regexp(raw, '\n', 'split');
+            indentLevel = 0;
+            newHtml = {};
+            
+            %--- Process line by line ---
+            for i = 1:numel(lines)
+                ln = strtrim(lines{i});
+                if isempty(ln)
+                    continue
+                end
+                
+                % detect closing tag (e.g. </div>)
+                isClose    = ~isempty(regexp(ln, '^</\w+', 'once'));
+                % detect self-closing tag (e.g. <img .../>)
+                isSelfClose= ~isempty(regexp(ln, '/>$', 'once'));
+                % detect opening tag (e.g. <div ...>)
+                isOpen     = ~isempty(regexp(ln, '^<\w+', 'once')) && ~isClose && ~isSelfClose;
+                
+                % decrease indent before printing closing tags
+                if isClose
+                    indentLevel = max(indentLevel-1, 0);
+                end
+                
+                % build indent string (4 spaces per level)
+                indent = repmat('    ', 1, indentLevel);
+                newHtml{end+1,1} = [indent ln]; %#ok<AGROW>
+                
+                % increase after printing opening tags
+                if isOpen
+                    indentLevel = indentLevel + 1;
+                end
+            end
+    
+                % Write new HTML file
+                obj.writeHTML(obj.tmp, sprintf('%s\n',string(newHtml)));
+            end
+
+        function title2placeholder(obj)
+            % Read HTML
+            htmlText = obj.readHTML(replace(obj.tmp,'.html','_tmp.html'));
+
+            % Define a regex that captures the span‐text inside <h1 class="S0">…</h1>
+            pattern = '<h1\s+class="S0">\s*<span>([^<]+)</span>\s*</h1>';
+            
+            % Run regexp once, pulling out the first token
+            token = regexp(htmlText, pattern, 'tokens', 'once');
+            
+            if isempty(token)
+                error('No matching <h1 class="S0">…</h1> found.');
+            end
+
+            % Write new HTML file
+            obj.writeHTML(obj.tmp, newHtml);
+        end
+
+        function code2placeholder(obj)
+            % Read HTML
+            htmlText = obj.readHTML(replace(obj.tmp,'.html','_tmp.html'));
+            
+            %Regex to capture non-greedy between div.inlineWrapper (with optional extra classes)
+            % (?s) makes '.' match newline
+            % class="inlineWrapper(?:\s+[^"]*)?" matches:
+            %   class="inlineWrapper"           (no extras)
+            % or class="inlineWrapper outputs"  (or any other extra classes)
+            pattern = '(?s)<div\s+class="inlineWrapper(?:\s+[^"]*)?">(.*?)</div>';
+            
+            % Extract all full matches and inner tokens
+            allMatches = regexp(htmlText, pattern, 'match');   % full <div…>…</div>
+            allTokens  = regexp(htmlText, pattern, 'tokens');  % { {'inner1'}, {'inner2'}, … }
+            
+            if isempty(allMatches)
+                warning('No matching <div class="inlineWrapper">…</div> blocks found.');
+            end
+            
+            %Loop to encode & replace each occurrence once
+            newHtml = htmlText;  % start from the original
+            for k = 1:numel(allMatches)
+                payload = allTokens{k}{1};                        % raw inner content
+                % payload = matlab.net.base64encode(char(innerHTML)); % Base64-encode it
+                placeholder = sprintf('{{CodePlaceholder: %s}}', payload); % build marker
+                % Escape the literal match before replacing, so regexprep treats it literally
+                literalMatch = regexptranslate('escape', allMatches{k});
+                newHtml = regexprep(newHtml, literalMatch, placeholder, 'once');
+            end
+
+            % Write new HTML file
+            obj.writeHTML(obj.tmp, newHtml);
+        end
+
+        function png2placeholder(obj)
+            % Read HTML
+            htmlText = obj.readHTML(replace(obj.tmp,'.html','_tmp.html'));
+
+            % Replace the base64 PNGs with placeholders
+            % Regex: (?s) turns on DOTALL so '.' matches newline
+            pattern1 = ['(?s)<div[^>]*class="inlineElement eoOutputWrapper ', ...
+            'disableDefaultGestureHandling embeddedOutputsFigure"[^>]*', ...
+            'data-testid="output_(\d+)"[^>]*>.*?</div>'];
+
+            % Replace all matches with the placeholder
+            plotIdx = cellfun(@(x) str2double(x{:}) + 1, regexp(htmlText, pattern1, "tokens"));
+
+            pattern2 = ['(?s)<div[^>]*class="figureElement eoOutputContent" role="article" aria-roledescription="Use Browse Mode to explore " aria-description="figure output "[^>]*?>', ...
+                        '<img[^>]*src="data:image/png;base64,[^\"]*"[^>]*>.*?</div>'];
+
+            % Replacement string
+            replacement = sprintf('{{PlotPlaceholder: plot_%d}}', plotIdx);
+
+            % Perform the replacement
+            newHtml = regexprep(htmlText, pattern2, replacement);
+
+            % Write new HTML
+            obj.writeHTML(obj.tmp, newHtml);
+        end
+    end
+end
